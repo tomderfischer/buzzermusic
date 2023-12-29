@@ -47,4 +47,4 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(8090, () => console.log('Listening on 8090'))
+server.listen(8090, () => console.log('Server started! Listening on 8090'))
