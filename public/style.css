@@ -66,6 +66,18 @@ header {
   color: rgb(243, 175, 185);
 }
 
+.your-turn {
+  background-color: rgb(29, 144, 14);
+  color: rgb(24, 24, 24);
+}
+
+.another-turn {
+  background-color: rgb(200, 11, 11);
+  color: rgb(24, 24, 24);
+}
+
+
+
 input[type="text"],
 input[type="number"],
 button {

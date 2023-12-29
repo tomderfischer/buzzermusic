@@ -5,6 +5,7 @@ const joined = document.querySelector('.js-joined')
 const buzzer = document.querySelector('.js-buzzer')
 const joinedInfo = document.querySelector('.js-joined-info')
 const editInfo = document.querySelector('.js-edit')
+const buzzed = document.querySelector('.js-buzzed')
 
 let user = {}
 
@@ -36,6 +37,34 @@ form.addEventListener('submit', (e) => {
 
 buzzer.addEventListener('click', (e) => {
   socket.emit('buzz', user)
+})
+
+socket.on('buzzes', (user_buzzer) => { 
+  getUserInfo() 
+  buzzed.classList.remove('hidden')
+  joined.classList.add('hidden')
+  if (user_buzzer.name == user.name){
+    body.classList.remove('buzzer-mode')
+    body.classList.add('your-turn')
+  }
+  else{
+    body.classList.remove('buzzer-mode')
+    body.classList.add('another-turn')
+  }
+  setTimeout(function() {
+    buzzed.classList.add('hidden')
+    joined.classList.remove('hidden')
+    body.classList.add('buzzer-mode')
+    if (user_buzzer.name == user.name) {
+      body.classList.add('buzzer-mode')
+      body.classList.remove('your-turn')
+    }
+    else {
+      body.classList.add('buzzer-mode')
+      body.classList.remove('another-turn')
+    }
+  }, 3000)
+
 })
 
 editInfo.addEventListener('click', () => {
