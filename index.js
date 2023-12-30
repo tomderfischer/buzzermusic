@@ -8,6 +8,7 @@ const io = socketio(server);
 
 const title = 'Buffer Buzzer'
 
+
 let data = {
   users: new Set(),
   buzzes: new Set(),
@@ -34,17 +35,30 @@ io.on('connection', (socket) => {
     console.log(`${user.name} joined!`)
   })
 
-  socket.on('buzz', (user) => {
+  socket.on('user_buzzer', (user) => {
     data.buzzes.add(`${user.name}-${user.team}`)
-    io.emit('buzzes', user)
+    io.emit('server_buzzer', user)
     console.log(`${user.name} buzzed in!`)
   })
 
-  socket.on('clear', () => {
-    data.buzzes = new Set()
-    io.emit('buzzes', [...data.buzzes])
-    console.log(`Clear buzzes`)
+  socket.on('host_right', () => {
+    io.emit('server_right')
+    console.log(`Antwort war richtig`)
   })
+
+  socket.on('host_wrong', () => {
+    io.emit('server_wrong')
+    console.log(`Antwort war falsch`)
+  })
+
+  socket.on('host_skip', () => {
+    io.emit('server_skip')
+    console.log(`Nächstes Lied`)
+  })
+
+
+
+
 })
 
 server.listen(8090, () => console.log('Server started! Listening on 8090'))

@@ -13,7 +13,10 @@ html
       ol.js-buzzes
         each buzz in buzzes
           li=`${buzz.name} on Team ${buzz.team}`
-      button.js-clear='Clear buzzes'
+      button.js-right='Antwort war richtig!'
+      button.js-wrong='Antwort war falsch!'
+      button.js-skip='Nächstes Lied..'
+
 
     script(src='/socket.io/socket.io.js')
     script(src='/host.js')
