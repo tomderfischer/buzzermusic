@@ -11,6 +11,7 @@ const loginerror = document.querySelector('.js-loginerror')
 
 var error_accured = 0
 var join_return = ""
+var buzzer_off = 0
 
 let user = {}
 let user_lastBuzzer = {}
@@ -57,11 +58,11 @@ form.addEventListener('submit', (e) => {
     }
   })
   saveUserInfo()
-  joinedInfo.innerText = `${user.name} with sound ${user.sound}`  
+  joinedInfo.innerText = `Viel Spaß ${user.name}!`  
 })
 
 buzzer.addEventListener('click', (e) => {
-  socket.emit('user_buzzer', user)
+  if (!buzzer_off) socket.emit('user_buzzer', user)
 })
 
 socket.on('server_buzzer', (user_buzzer) => { 
@@ -79,15 +80,37 @@ socket.on('server_buzzer', (user_buzzer) => {
 
 socket.on('server_right', () => {
   host_reaction()
+  if (buzzer_off) {
+    buzzer_off = 0
+    buzzer.classList.remove('hidden')
+  }
 })
 
-socket.on('server_wrong', () => {
+socket.on('server_wrong', (user_buzzer) => {
   host_reaction()
+  if (user_buzzer.name == user.name) {
+    buzzer_off = 1
+    joinedInfo.innerText = `Buzzer deaktiviert!`
+  }
 })
 
-socket.on('server_skip', () => {
-  host_reaction()
+socket.on('server_reset_buzzers', () => {
+  if (buzzer_off) {
+    buzzer_off = 0
+    joinedInfo.innerText = `Viel Spaß ${user.name}!`
+  }
 })
+
+socket.on('server_newgame', () => {
+  if (buzzer_off) {
+    buzzer_off = 0
+  }
+  form.classList.remove('hidden')
+  joined.classList.add('hidden')
+  body.classList.remove('buzzer-mode')
+  localStorage.removeItem("user")
+})
+
 
 editInfo.addEventListener('click', () => {
   joined.classList.add('hidden')

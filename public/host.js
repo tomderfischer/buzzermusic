@@ -4,6 +4,7 @@ const buzzList = document.querySelector('.js-buzzes')
 const right = document.querySelector('.js-right')
 const wrong = document.querySelector('.js-wrong')
 const skip = document.querySelector('.js-skip')
+const newgame = document.querySelector('.js-newgame')
 
 sounds = new Set()
 
@@ -47,6 +48,10 @@ wrong.addEventListener('click', () => {
 
 skip.addEventListener('click', () => {
   socket.emit('host_skip')
+})
+
+newgame.addEventListener('click', () => {
+  socket.emit('host_newgame')
 })
 
 socket.on('server_buzzer', (user) => { 

@@ -6,6 +6,9 @@ const app = express();
 const server = http.Server(app);
 const io = socketio(server);
 
+var server_state = "initialising"
+var active_player = ""
+
 const title = 'Buffer Buzzer'
 
 players =  new Set()
@@ -37,6 +40,7 @@ io.on('connection', (socket) => {
       if (element.sound == user.sound) join_return = "invalid_sound"
       if (element.id == user.id) join_return = "invalid_id"
     });
+    if (server_state != "initialising") join_return = "game_in_progress"
     console.log(join_return)
     if (join_return == "") {
       join_return = "ok"
@@ -50,25 +54,58 @@ io.on('connection', (socket) => {
   })
 
   socket.on('user_buzzer', (user) => {
-    io.emit('server_buzzer', user)
-    console.log(`${user.name} buzzed in!`)
+    if (server_state == "playing") {
+      server_state = "buzzed"
+      active_player = user
+      io.emit('server_buzzer', user)
+      console.log(`${user.name} buzzed in!`)
+    }
   })
 
   socket.on('host_right', () => {
-    io.emit('server_right')
-    console.log(`Antwort war richtig`)
+    if (server_state == "buzzed") {
+      players.forEach(element => {
+        if (element.name == active_player.name) element.points++;
+      });
+      io.emit('server_right') 
+      active_player = ""
+      console.log(`Antwort war richtig`)
+      server_state = "playing"
+    }
   })
 
   socket.on('host_wrong', () => {
-    io.emit('server_wrong')
-    console.log(`Antwort war falsch`)
+    if (server_state == "buzzed") {
+      server_state = "playing"
+      io.emit('server_wrong', active_player)
+      active_player = ""
+      console.log(`Antwort war falsch`)
+    }
   })
 
   socket.on('host_skip', () => {
-    io.emit('server_skip')
-    console.log(`Nächstes Lied`)
+    if (server_state == "playing") {
+      io.emit('server_reset_buzzers')
+      console.log(`Reset Buzzers`)
+    }
   })
 
+  socket.on('host_newgame', () => {
+    console.log("new game pressed")
+    if (server_state == "playing") {
+      io.emit('server_newgame')
+      players.forEach(element => {
+        players.delete(element)
+      });
+      server_state = "initialising"
+      console.log(`start new game`)
+    }
+    else if (server_state == "initialising") {
+      server_state = "playing"
+      io.emit('server_startgame')
+      console.log(`game started`)
+    }
+  })
 
 
 
