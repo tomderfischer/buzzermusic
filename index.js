@@ -8,35 +8,48 @@ const io = socketio(server);
 
 const title = 'Buffer Buzzer'
 
+players =  new Set()
 
-let data = {
-  users: new Set(),
-  buzzes: new Set(),
+function player(name, id, sound) {
+  this.name = name
+  this.id = id
+  this.sound = sound
+  this.points = 0
 }
 
-const getData = () => ({
-  users: [...data.users],
-  buzzes: [...data.buzzes].map(b => {
-    const [ name, team ] = b.split('-')
-    return { name, team }
-  })
-})
 
 app.use(express.static('public'))
 app.set('view engine', 'pug')
 
 app.get('/', (req, res) => res.render('index', { title }))
-app.get('/host', (req, res) => res.render('host', Object.assign({ title }, getData())))
+app.get('/host', (req, res) => res.render('host', { title }))
+
 
 io.on('connection', (socket) => {
-  socket.on('join', (user) => {
-    data.users.add(user.id)
-    io.emit('active', [...data.users].length)
-    console.log(`${user.name} joined!`)
+  socket.on('join', (user, callback) => {
+    console.log(user)
+    join_return = ""
+    if (user.name == "") join_return = "invalid_name"
+    if (user.sound == "") join_return = "invalid_sound"
+    if (user.id == 0) join_return = "invalid_id"
+    players.forEach(element => {
+      if (element.name == user.name) join_return = "invalid_name"
+      if (element.sound == user.sound) join_return = "invalid_sound"
+      if (element.id == user.id) join_return = "invalid_id"
+    });
+    console.log(join_return)
+    if (join_return == "") {
+      join_return = "ok"
+      players.add(new player(user.name, user.id, user.sound))
+      console.log(`${user.name} has joined!`)
+      players.forEach(element => {
+        console.log(element)
+      })
+    }
+    callback(join_return)
   })
 
   socket.on('user_buzzer', (user) => {
-    data.buzzes.add(`${user.name}-${user.team}`)
     io.emit('server_buzzer', user)
     console.log(`${user.name} buzzed in!`)
   })

@@ -9,10 +9,6 @@ html
       img.logo(src='/buzzer-logo.svg')
 
     div.container
-      h2.js-active=`${users.length} joined`
-      ol.js-buzzes
-        each buzz in buzzes
-          li=`${buzz.name} on Team ${buzz.team}`
       button.js-right='Antwort war richtig!'
       button.js-wrong='Antwort war falsch!'
       button.js-skip='Nächstes Lied..'

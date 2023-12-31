@@ -11,16 +11,35 @@ html
 
     div.container
       form.view.js-join
+        h2.js-loginerror.hidden=`Anmeldung nicht erfolgreich! Error: ${join_return}`
         img(src="/lets-play.png" class="main-image")
         h2="Let's play!"
         input(type='text' name='name' placeholder='Your name' required='required')
-        input(type='number' name='team' placeholder='Your team number' required='required')
+        label="Wähle einen Buzzersound!"
+        select(name='buzzersound' required='required')
+          option(value='aww') Aww
+          option(value='bruh') Bruh
+          option(value='buzzer') Buzzer
+          option(value='delfin') Delfin
+          option(value='error') Error
+          option(value='fart') Fart
+          option(value='feuerball') Feuerball
+          option(value='haltsmaul') Halt`s Maul
+          option(value='jaegermeister') Jägermeister
+          option(value='okletsgo') Ok Let`s Go
+          option(value='pew') Pew
+          option(value='punch') Punch
+          option(value='quak') Quak
+          option(value='quietsch') Quietsch
+          option(value='sui') Suiiiii
+          option(value='wow') WOW!
+          option(value='yippie') Yippie
         button(type='submit')='Join!'
+
 
       div.view.js-joined.hidden
         button.js-buzzer.buzzer()='Buzz!!!'
         p.js-joined-info=""
-        button.js-edit.secondary='Change teams'
 
       div.view.js-buzzed.hidden
         h1="Es wurde gebuzzert!"
