@@ -68,6 +68,9 @@ io.on('connection', (socket) => {
         if (element.name == active_player.name) element.points++;
       });
       io.emit('server_right') 
+      players.forEach(element => {
+        console.log(`${element.name}: ${element.points}`)
+      });      
       active_player = ""
       console.log(`Antwort war richtig`)
       server_state = "playing"
